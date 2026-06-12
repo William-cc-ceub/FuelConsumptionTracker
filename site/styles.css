@@ -173,6 +173,14 @@ h1 {
   margin-bottom: 2rem;
 }
 
+.login-page .form-section {
+  display: none;
+}
+
+.login-page .form-section.active {
+  display: block;
+}
+
 .table-section {
   margin-bottom: 2rem;
 }

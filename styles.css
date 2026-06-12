@@ -413,6 +413,14 @@ td {
   text-decoration: underline;
 }
 
+.login-page .form-section {
+  display: none;
+}
+
+.login-page .form-section.active {
+  display: block;
+}
+
 .error-message {
   padding: 1rem;
   border-radius: 16px;
