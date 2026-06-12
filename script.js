@@ -427,6 +427,33 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
     }
 
+    // Component wrappers to prepare modular refactor
+    const Entries = {
+      render: renderEntries,
+      save: saveEntries,
+      drawChart: drawChart,
+      drawMonthlyChart: drawMonthlyChart,
+      renderMonthlySummary: renderMonthlySummary,
+      recalcAllDistances: recalculateAllDistances,
+      recalcDistancesForVehicle: recalculateDistancesForVehicle,
+      calculateDistanceFromOdometer: calculateDistanceFromOdometer,
+      updateSummary: updateSummary
+    };
+
+    const Vehicles = {
+      render: renderVehicleList,
+      save: saveVehicles,
+      updateSummary: updateVehicleSummary,
+      updateOdometer: updateVehicleOdometer,
+      populateVehicleSelect: populateVehicleSelect
+    };
+
+    const Modal = {
+      showQrModal: showQrModal,
+      showLinkModal: showLinkModal,
+      setupMobileLink: setupMobileLink
+    };
+
   function renderEntries() {
     entryTable.innerHTML = '';
 
@@ -465,19 +492,19 @@ document.addEventListener('DOMContentLoaded', () => {
     recalculateAllDistances();
     updateVehicleOdometer();
     Storage.saveEntries();
-    if (entryTable) renderEntries();
-    if (avgConsumptionEl) updateSummary();
+    if (entryTable) Entries.render();
+    if (avgConsumptionEl) Entries.updateSummary();
     const monthlyModeEl = document.getElementById('monthlyMode');
     const mode = monthlyModeEl ? monthlyModeEl.value : 'byDate';
-    renderMonthlySummary(mode);
-    drawMonthlyChart(mode);
+    Entries.renderMonthlySummary(mode);
+    Entries.drawMonthlyChart(mode);
   }
 
   function saveVehicles() {
     Storage.saveVehicles();
-    renderVehicleList();
-    updateVehicleSummary();
-    populateVehicleSelect();
+    Vehicles.render();
+    Vehicles.updateSummary();
+    Vehicles.populateVehicleSelect();
   }
 
   function resetForm() {
@@ -520,8 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.push(entry);
       }
 
-      saveEntries();
-      saveVehicles();
+      Entries.save();
+      Vehicles.save();
       resetForm();
       // Após salvar, volte para a página principal para ver o resumo
       window.location.href = 'index.html';
@@ -610,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
         vehicles.push(vehicle);
       }
 
-      saveVehicles();
+      Vehicles.save();
       resetVehicleForm();
     });
 
@@ -636,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (action === 'delete-vehicle') {
         if (!confirm('Excluir este veículo?')) return;
         vehicles.splice(id, 1);
-        saveVehicles();
+        Vehicles.save();
       }
     });
   }
@@ -657,8 +684,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (action === 'delete') {
         if (!confirm('Excluir este registro?')) return;
         entries.splice(id, 1);
-        saveEntries();
-        saveVehicles();
+        Entries.save();
+        Vehicles.save();
       }
     });
   }
@@ -673,35 +700,35 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     entries = [];
-    saveEntries();
-    saveVehicles();
+    Entries.save();
+    Vehicles.save();
     resetForm();
     });
   }
 
   window.addEventListener('resize', () => {
-    drawChart();
+    Entries.drawChart();
   });
   if (entryTable) {
-    renderEntries();
-    updateSummary();
+    Entries.render();
+    Entries.updateSummary();
     resetForm();
   }
 
   if (vehicleTable || vehicleForm) {
-    renderVehicleList();
-    updateVehicleSummary();
+    Vehicles.render();
+    Vehicles.updateSummary();
     resetVehicleForm();
   }
   if (vehicleSelect) {
-    populateVehicleSelect();
+    Vehicles.populateVehicleSelect();
   }
   // Atualiza contador/resumo de veículos também na página principal
-  updateVehicleSummary();
+  Vehicles.updateSummary();
   // render monthly summary on load
   const monthlyModeEl = document.getElementById('monthlyMode');
   if (monthlyModeEl) {
-    monthlyModeEl.addEventListener('change', () => { renderMonthlySummary(monthlyModeEl.value); drawMonthlyChart(monthlyModeEl.value); });
+    monthlyModeEl.addEventListener('change', () => { Entries.renderMonthlySummary(monthlyModeEl.value); Entries.drawMonthlyChart(monthlyModeEl.value); });
   }
   if (showVehicleKmCheckbox) {
     showVehicleKmCheckbox.addEventListener('change', renderVehicleKm);
@@ -843,7 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   const initialMode = monthlyModeEl ? monthlyModeEl.value : 'byDate';
-  renderMonthlySummary(initialMode);
-  drawMonthlyChart(initialMode);
+  Entries.renderMonthlySummary(initialMode);
+  Entries.drawMonthlyChart(initialMode);
   renderVehicleKm();
 });
