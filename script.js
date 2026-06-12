@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Check authentication
+  const currentUserStr = localStorage.getItem('currentUser');
+  if (!currentUserStr) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const currentUser = JSON.parse(currentUserStr);
+  const userId = currentUser.id;
+
+  // Storage keys with user isolation
+  const STORAGE_KEY = `fuelConsumptionEntries_${userId}`;
+  const VEHICLE_KEY = `vehicles_${userId}`;
+
   const fuelForm = document.getElementById('fuelForm');
   const entryTable = document.getElementById('entryTable');
   const avgConsumptionEl = document.getElementById('avgConsumption');
@@ -14,9 +28,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const navVehiclesBtn = document.getElementById('navVehicles');
   const navHomeBtn = document.getElementById('navHome');
   const vehicleSelect = document.getElementById('vehicleId');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const userDisplay = document.getElementById('userDisplay');
 
-  const STORAGE_KEY = 'fuelConsumptionEntries';
-  const VEHICLE_KEY = 'vehicles';
+  // Display current user
+  if (userDisplay) {
+    userDisplay.textContent = `Logado como: ${currentUser.username}`;
+  }
+
+  // Logout handler
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('Deseja realmente sair?')) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+      }
+    });
+  }
   let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
   let vehicles = JSON.parse(localStorage.getItem(VEHICLE_KEY) || '[]').map((v) => ({
     ...v,

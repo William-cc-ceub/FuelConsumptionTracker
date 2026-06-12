@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Fuel Consumption Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header h1 {
+      margin: 0.5rem 0 0 0;
+      color: var(--foreground);
+      font-size: 1.5rem;
+    }
+
+    .login-header p {
+      color: var(--foreground-muted);
+      margin: 0.25rem 0;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .login-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-weight: 500;
+      color: var(--foreground);
+    }
+
+    .login-form input {
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .login-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .login-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .login-buttons button {
+      flex: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .login-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .login-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .register-btn {
+      background: var(--border);
+      color: var(--foreground);
+    }
+
+    .register-btn:hover {
+      background: var(--background-secondary);
+    }
+
+    .error-message {
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .toggle-form {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--foreground-muted);
+    }
+
+    .toggle-form button {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .toggle-form button:hover {
+      text-decoration: none;
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <p class="eyebrow">Fuel Consumption Tracker</p>
+        <h1>Bem-vindo</h1>
+      </div>
+
+      <div id="errorMessage" class="error-message"></div>
+
+      <!-- Login Form -->
+      <div id="loginSection" class="form-section active">
+        <form id="loginForm" class="login-form">
+          <label>
+            Usuário
+            <input type="text" id="loginUsername" required />
+          </label>
+          <label>
+            Senha
+            <input type="password" id="loginPassword" required />
+          </label>
+          <div class="login-buttons">
+            <button type="submit" class="login-btn">Entrar</button>
+            <button type="button" class="register-btn" id="toggleToRegister">Registrar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerSection" class="form-section">
+        <form id="registerForm" class="login-form">
+          <label>
+            Novo usuário
+            <input type="text" id="registerUsername" required />
+          </label>
+          <label>
+            Senha
+            <input type="password" id="registerPassword" required />
+          </label>
+          <label>
+            Confirmar senha
+            <input type="password" id="registerPasswordConfirm" required />
+          </label>
+          <div class="login-buttons">
+            <button type="submit" class="login-btn">Criar conta</button>
+            <button type="button" class="register-btn" id="toggleToLogin">Voltar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="toggle-form" id="toggleInfo"></div>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginSection = document.getElementById('loginSection');
+    const registerSection = document.getElementById('registerSection');
+    const errorMessage = document.getElementById('errorMessage');
+    const toggleToRegister = document.getElementById('toggleToRegister');
+    const toggleToLogin = document.getElementById('toggleToLogin');
+
+    const USERS_KEY = 'fuelTrackerUsers';
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.classList.add('show');
+      setTimeout(() => errorMessage.classList.remove('show'), 4000);
+    }
+
+    function hashPassword(password) {
+      // Simples hash baseado em charCode (NÃO é criptografia segura, apenas obfuscação)
+      return btoa(password);
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function generateUserId() {
+      return `user-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    }
+
+    toggleToRegister.addEventListener('click', () => {
+      loginSection.classList.remove('active');
+      registerSection.classList.add('active');
+    });
+
+    toggleToLogin.addEventListener('click', () => {
+      registerSection.classList.remove('active');
+      loginSection.classList.add('active');
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!username || !password) {
+        showError('Preencha todos os campos');
+        return;
+      }
+
+      const users = getUsers();
+      const user = Object.values(users).find(u => u.username === username);
+
+      if (!user || user.password !== hashPassword(password)) {
+        showError('Usuário ou senha incorretos');
+        return;
+      }
+
+      localStorage.setItem('currentUser', JSON.stringify({ id: user.id, username: user.username }));
+      window.location.href = 'index.html';
+    });
+
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('registerUsername').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('registerPasswordConfirm').value;
+
+      if (!username || !password || !confirmPassword) {
+        showError('Preencha todos os campos');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showError('As senhas não conferem');
+        return;
+      }
+
+      if (password.length < 6) {
+        showError('A senha deve ter no mínimo 6 caracteres');
+        return;
+      }
+
+      const users = getUsers();
+      if (Object.values(users).some(u => u.username === username)) {
+        showError('Este usuário já existe');
+        return;
+      }
+
+      const userId = generateUserId();
+      users[userId] = {
+        id: userId,
+        username,
+        password: hashPassword(password)
+      };
+
+      saveUsers(users);
+      showError('Conta criada com sucesso! Faça login para continuar.');
+      
+      setTimeout(() => {
+        registerSection.classList.remove('active');
+        loginSection.classList.add('active');
+        document.getElementById('loginUsername').value = username;
+        document.getElementById('loginPassword').value = '';
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
