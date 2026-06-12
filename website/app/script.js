@@ -45,12 +45,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  // Load entries and vehicles for the current user. If none found, try migrating
+  // legacy global keys (no-user) into the user-scoped keys so existing data
+  // remains available after enabling multi-user mode.
   let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
   let vehicles = JSON.parse(localStorage.getItem(VEHICLE_KEY) || '[]').map((v) => ({
     ...v,
     id: v.id || generateId(),
     initialOdometer: v.initialOdometer != null ? v.initialOdometer : v.odometer,
   }));
+
+  // Migrate legacy global vehicles if user-scoped vehicles are empty
+  if ((!vehicles || vehicles.length === 0) && localStorage.getItem('vehicles')) {
+    try {
+      const legacy = JSON.parse(localStorage.getItem('vehicles') || '[]');
+      if (Array.isArray(legacy) && legacy.length) {
+        vehicles = legacy.map((v) => ({
+          ...v,
+          id: v.id || generateId(),
+          initialOdometer: v.initialOdometer != null ? v.initialOdometer : v.odometer,
+        }));
+        localStorage.setItem(VEHICLE_KEY, JSON.stringify(vehicles));
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+  }
+
+  // Migrate legacy global entries if user-scoped entries are empty
+  if ((!entries || entries.length === 0) && localStorage.getItem('fuelConsumptionEntries')) {
+    try {
+      const legacyEntries = JSON.parse(localStorage.getItem('fuelConsumptionEntries') || '[]');
+      if (Array.isArray(legacyEntries) && legacyEntries.length) {
+        entries = legacyEntries;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+  }
   let editingId = null;
   let editingVehicleId = null;
 
