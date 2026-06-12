@@ -7,4 +7,117 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Cópia estática da aplicação (mesmo conteúdo de index.html) -->
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Fuel Consumption Tracker</p>
+        <h1>Controle de Consumo de Combustível</h1>
+        <p class="subtitle">Registre abastecimentos, acompanhe média de consumo e veja seu histórico.</p>
+      </div>
+      <nav class="top-nav">
+        <a class="ghost-button" href="index.html">Tela principal</a>
+        <a class="ghost-button" href="new_entry.html">Adicionar registro</a>
+         <a id="navVehicles" class="ghost-button" href="vehicles.html">Gerenciar veículos</a>
+      </nav>
+      <div class="overview-card">
+        <p>Último abastecimento</p>
+        <strong id="lastFill">-</strong>
+      </div>
+    </header>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <p>Média de consumo</p>
+        <strong id="avgConsumption">0 L/100km</strong>
+      </article>
+      <article class="summary-card">
+        <p>Veículos cadastrados</p>
+        <strong id="vehiclesCount">0</strong>
+      </article>
+      <article class="summary-card">
+        <p>Custo por km</p>
+        <strong id="costPerKm">R$ 0,00</strong>
+      </article>
+      <article class="summary-card">
+        <p>Total gasto</p>
+        <strong id="totalCost">R$ 0,00</strong>
+      </article>
+    </section>
+
+    <section class="form-section">
+      <div class="info-card">
+        <div>
+          <p class="eyebrow">Registros</p>
+        </div>
+        <span class="status-pill" id="recordCount">0 registros</span>
+      </div>
+
+      <div class="chart-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>Consumo mensal</h2>
+        </div>
+        <div class="chart-controls">
+          <label for="monthlyMode">Ver por:</label>
+          <select id="monthlyMode">
+            <option value="byDate">Por data</option>
+            <option value="byCost">Por máximo gasto</option>
+          </select>
+        </div>
+        <canvas id="consumptionChart"></canvas>
+      </div>
+
+      <aside class="monthly-column">
+        <h3>Resumo mensal</h3>
+        <div class="table-wrapper">
+          <table class="monthly-table" id="monthlyTable">
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>Km</th>
+                <th>Litros</th>
+                <th>Consumo (L/100km)</th>
+                <th>Custo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row"><td colspan="5">Sem dados mensais.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="table-section">
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <h2>Últimos registros</h2>
+            <p class="table-description">Edite ou exclua entradas diretamente na lista.</p>
+          </div>
+          <button id="clearAll" type="button">Limpar tudo</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Veículo</th>
+                <th>Km</th>
+                <th>Litros</th>
+                <th>Preço</th>
+                <th>Custo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="entryTable">
+              <tr class="empty-row"><td colspan="6">Nenhum registro ainda.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
