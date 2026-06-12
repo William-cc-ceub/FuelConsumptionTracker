@@ -59,6 +59,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function getSortedEntriesForVehicle(vehicleId) {
+    return entries
+      .filter((entry) => entry.vehicleId === vehicleId)
+      .slice()
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+
+  function calculateDistanceFromOdometer(entry, previousEntry) {
+    const odoCurrent = Number(entry.odometer);
+    const odoPrevious = previousEntry ? Number(previousEntry.odometer) : null;
+    if (Number.isFinite(odoCurrent) && Number.isFinite(odoPrevious)) {
+      return Math.max(0, odoCurrent - odoPrevious);
+    }
+    return Number.isFinite(Number(entry.distance)) ? Number(entry.distance) : 0;
+  }
+
+  function recalculateDistancesForVehicle(vehicleId) {
+    let previousEntry = null;
+    getSortedEntriesForVehicle(vehicleId).forEach((entry) => {
+      entry.distance = calculateDistanceFromOdometer(entry, previousEntry);
+      previousEntry = entry;
+    });
+  }
+
+  function recalculateAllDistances() {
+    [...new Set(entries.map((entry) => entry.vehicleId))].forEach((vehicleId) => {
+      recalculateDistancesForVehicle(vehicleId);
+    });
+  }
+
   function updateSummary() {
     if (!entries.length) {
       avgConsumptionEl.textContent = '0 L/100km';
@@ -69,13 +99,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const totalLiters = entries.reduce((sum, entry) => sum + entry.liters, 0);
-    const totalKm = entries.reduce((sum, entry) => sum + entry.distance, 0);
+    const entriesByVehicle = [...new Set(entries.map((entry) => entry.vehicleId))].map((vehicleId) =>
+      getSortedEntriesForVehicle(vehicleId).filter((entry) => entry.distance > 0)
+    );
+    const vehiclesWithTwoOrMoreRefuels = entriesByVehicle.filter((vehicleEntries) => vehicleEntries.length >= 2);
+    const validEntries = vehiclesWithTwoOrMoreRefuels.flat();
+    const totalLiters = validEntries.reduce((sum, entry) => sum + entry.liters, 0);
+    const totalKm = validEntries.reduce((sum, entry) => sum + entry.distance, 0);
     const totalCost = entries.reduce((sum, entry) => sum + entry.cost, 0);
     const avgConsumption = totalKm > 0 ? (totalLiters / totalKm) * 100 : 0;
     const costPerKm = totalKm > 0 ? totalCost / totalKm : 0;
 
-    avgConsumptionEl.textContent = `${avgConsumption.toFixed(2)} L/100km`;
+    avgConsumptionEl.textContent = vehiclesWithTwoOrMoreRefuels.length > 0 && totalKm > 0 ? `${avgConsumption.toFixed(2)} L/100km` : '-';
     costPerKmEl.textContent = formatCurrency(costPerKm);
     totalCostEl.textContent = formatCurrency(totalCost);
     lastFillEl.textContent = entries[entries.length - 1].date;
@@ -125,23 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderVehicleKm();
   }
 
-  function updateVehicleOdometer(newEntry, previousEntry = null) {
-    const newVehicle = vehicles.find((v) => v.id === newEntry.vehicleId);
-    const oldVehicle = previousEntry ? vehicles.find((v) => v.id === previousEntry.vehicleId) : null;
-    const newDistance = Number(newEntry.distance) || 0;
-    const oldDistance = previousEntry ? Number(previousEntry.distance) || 0 : 0;
-
-    if (oldVehicle && (!newVehicle || oldVehicle.id !== newVehicle.id)) {
-      oldVehicle.odometer = Math.max(0, Number(oldVehicle.odometer || 0) - oldDistance);
-    }
-
-    if (newVehicle) {
-      if (oldVehicle && oldVehicle.id === newVehicle.id) {
-        newVehicle.odometer = Math.max(0, Number(newVehicle.odometer || 0) + newDistance - oldDistance);
-      } else {
-        newVehicle.odometer = Math.max(0, Number(newVehicle.odometer || 0) + newDistance);
+  function updateVehicleOdometer() {
+    vehicles.forEach((vehicle) => {
+      const vehicleEntries = getSortedEntriesForVehicle(vehicle.id)
+        .filter((entry) => Number.isFinite(Number(entry.odometer)));
+      if (vehicleEntries.length) {
+        vehicle.odometer = Number(vehicleEntries[vehicleEntries.length - 1].odometer);
       }
-    }
+    });
   }
 
   if (navVehiclesBtn) {
@@ -332,11 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const displayIndex = entries.length - 1 - index;
       const vehicle = vehicles.find((v) => v.id === entry.vehicleId);
       const vehicleLabel = getVehicleLabel(vehicle);
+      const displayKm = Number.isFinite(Number(entry.odometer)) ? Number(entry.odometer) : Number(entry.distance) || 0;
 
       row.innerHTML = `
         <td>${entry.date}</td>
         <td>${vehicleLabel}</td>
-        <td>${entry.distance.toFixed(1)} km</td>
+        <td>${displayKm.toFixed(1)} km</td>
         <td>${entry.liters.toFixed(2)} L</td>
         <td>${formatCurrency(entry.price)}</td>
         <td>${formatCurrency(entry.cost)}</td>
@@ -352,6 +379,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveEntries() {
+    recalculateAllDistances();
+    updateVehicleOdometer();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     if (entryTable) renderEntries();
     if (avgConsumptionEl) updateSummary();
@@ -376,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function fillForm(entry) {
     document.getElementById('date').value = entry.date;
-    document.getElementById('distance').value = entry.distance;
+    document.getElementById('odometer').value = entry.odometer != null ? entry.odometer : (entry.distance != null ? entry.distance : '');
     document.getElementById('liters').value = entry.liters;
     document.getElementById('price').value = entry.price;
     document.getElementById('notes').value = entry.notes || '';
@@ -389,28 +418,25 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       const date = document.getElementById('date').value;
-      const distance = parseFloat(document.getElementById('distance').value);
+      const odometer = parseFloat(document.getElementById('odometer').value);
       const liters = parseFloat(document.getElementById('liters').value);
       const price = parseFloat(document.getElementById('price').value);
       const notes = document.getElementById('notes').value;
       const vehicleId = document.getElementById('vehicleId') ? document.getElementById('vehicleId').value : '';
 
-      if (!date || distance <= 0 || liters <= 0 || price <= 0 || !vehicleId) {
+      if (!date || odometer <= 0 || liters <= 0 || price <= 0 || !vehicleId) {
         return;
       }
 
       const cost = liters * price;
-      const entry = { date, distance, liters, price, cost, notes, vehicleId };
-      let previousEntry = null;
+      const entry = { date, odometer, liters, price, cost, notes, vehicleId };
 
       if (editingId !== null) {
-        previousEntry = entries[editingId];
         entries[editingId] = entry;
       } else {
         entries.push(entry);
       }
 
-      updateVehicleOdometer(entry, previousEntry);
       saveEntries();
       saveVehicles();
       resetForm();
@@ -549,6 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Excluir este registro?')) return;
         entries.splice(id, 1);
         saveEntries();
+        saveVehicles();
       }
     });
   }
@@ -564,6 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     entries = [];
     saveEntries();
+    saveVehicles();
     resetForm();
     });
   }
