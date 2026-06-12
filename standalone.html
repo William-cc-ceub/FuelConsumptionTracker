@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuel Consumption Tracker — Standalone</title>
+  <style>
+/* Inlined styles.css */
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fuel Consumption Tracker — Standalone</title>
+  <style>
+/* Inlined styles.css */
+/* QR Modal Styles */
+  .qr-modal {
+    background: var(--surface-strong);
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: min(92%, 420px);
+    text-align: center;
+    color: var(--text);
+  }
+  .qr-modal img { width: 260px; height: 260px; border-radius: 8px; background: white; display:block; margin: 0.5rem auto; }
+  .qr-modal h3 { margin: 0; color: var(--muted); }
+  .qr-modal .qr-link { word-break: break-all; font-size: 0.85rem; color: var(--muted); margin: 0.5rem 0; }
+  .qr-actions { display:flex; gap:0.5rem; justify-content:center; margin-top:0.5rem; }
+  .qr-actions button { padding:0.6rem 0.9rem; border-radius:10px; background: rgba(56,189,248,0.12); color:var(--accent); border:1px solid rgba(56,189,248,0.12); }
+  .qr-modal-close { position:absolute; right:1rem; top:1rem; background:transparent; color:var(--muted); border:0; font-size:1.4rem; }
+:root {
+  --bg: #0f172a;
+  --surface: #111827;
+  --surface-strong: #1f2937;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-strong: #38bdf8;
+  --border: rgba(148, 163, 184, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: radial-gradient(circle at top, rgba(56, 189, 248, 0.13), transparent 30%),
+    linear-gradient(180deg, #020617 0%, #08101f 100%);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(1160px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.app-header {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 2.8vw, 3rem);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  max-width: 44rem;
+}
+
+.overview-card,
+.summary-card,
+.form-card,
+.chart-card,
+.table-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 1.75rem;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.1);
+}
+
+.overview-card {
+  justify-self: end;
+  min-width: 260px;
+}
+
+.form-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+}
+
+.status-pill {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.table-description {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.overview-card p,
+.summary-card p,
+.table-header h2,
+.chart-card h2,
+.form-card h2 {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+}
+
+.overview-card strong,
+.summary-card strong {
+  display: block;
+  font-size: 2rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ghost-button {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+button[type="submit"],
+.ghost-button {
+  min-width: 140px;
+}
+
+#cancelEdit {
+  display: none;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 2rem;
+}
+
+.form-section {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 420px;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+.chart-card {
+  grid-column: 1 / -1;
+}
+
+/* Estilos específicos para a página de gerenciamento de veículos:
+   lista primeiro, formulário abaixo (coluna única) */
+.page-vehicles .form-section {
+  grid-template-columns: 1fr;
+}
+
+.page-vehicles .table-card {
+  margin-bottom: 1rem;
+}
+
+.page-vehicles .form-card {
+  margin-top: 0;
+}
+
+.form-card label {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.form-card input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.form-card input:focus {
+  outline: 2px solid rgba(56, 189, 248, 0.35);
+}
+
+.form-card button {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0ea5e9, #22d3ee);
+  color: #050816;
+  font-weight: 700;
+}
+
+.chart-placeholder {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  color: var(--muted);
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.table-header button {
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 0;
+}
+
+th,
+<td>
+  padding: 1rem 1.2rem;
+  text-align: left;
+}
+
+</style>
+</head>
+<body>
+  <!-- Standalone: versão simplificada da interface principal -->
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Fuel Consumption Tracker</p>
+        <h1>Controle de Consumo de Combustível</h1>
+        <p class="subtitle">Registre abastecimentos, acompanhe média de consumo e veja seu histórico.</p>
+      </div>
+      <nav class="top-nav">
+        <a class="ghost-button" href="#">Tela principal</a>
+        <a class="ghost-button" href="#add">Adicionar registro</a>
+        <a class="ghost-button" href="#vehicles">Gerenciar veículos</a>
+      </nav>
+      <div class="overview-card">
+        <p>Último abastecimento</p>
+        <strong id="lastFill">-</strong>
+      </div>
+    </header>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <p>Média de consumo</p>
+        <strong id="avgConsumption">0 L/100km</strong>
+      </article>
+      <article class="summary-card">
+        <p>Veículos cadastrados</p>
+        <strong id="vehiclesCount">0</strong>
+      </article>
+      <article class="summary-card">
+        <p>Custo por km</p>
+        <strong id="costPerKm">R$ 0,00</strong>
+      </article>
+      <article class="summary-card">
+        <p>Total gasto</p>
+        <strong id="totalCost">R$ 0,00</strong>
+      </article>
+    </section>
+
+    <section class="form-section">
+      <div class="info-card">
+        <div>
+          <p class="eyebrow">Registros</p>
+        </div>
+        <span class="status-pill" id="recordCount">0 registros</span>
+      </div>
+
+      <div class="chart-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>Consumo mensal</h2>
+        </div>
+        <div class="chart-controls">
+          <label for="monthlyMode">Ver por:</label>
+          <select id="monthlyMode">
+            <option value="byDate">Por data</option>
+            <option value="byCost">Por máximo gasto</option>
+          </select>
+        </div>
+        <canvas id="consumptionChart"></canvas>
+      </div>
+
+      <aside class="monthly-column">
+        <h3>Resumo mensal</h3>
+        <div class="table-wrapper">
+          <table class="monthly-table" id="monthlyTable">
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>Km</th>
+                <th>Litros</th>
+                <th>Consumo (L/100km)</th>
+                <th>Custo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row"><td colspan="5">Sem dados mensais.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section class="table-section">
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <h2>Últimos registros</h2>
+            <p class="table-description">Edite ou exclua entradas diretamente na lista.</p>
+          </div>
+          <button id="clearAll" type="button">Limpar tudo</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Veículo</th>
+                <th>Km</th>
+                <th>Litros</th>
+                <th>Preço</th>
+                <th>Custo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="entryTable">
+              <tr class="empty-row"><td colspan="6">Nenhum registro ainda.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+// Inlined script.js (trimmed for standalone — mantém lógica principal)
+
+(function(){
+  // Conteúdo essencial do script original
+  const STORAGE_KEY = 'fuelConsumptionEntries';
+  const VEHICLE_KEY = 'vehicles';
+  let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let vehicles = JSON.parse(localStorage.getItem(VEHICLE_KEY) || '[]');
+
+  function formatCurrency(value) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  }
+
+  function updateSummary() {
+    const avgConsumptionEl = document.getElementById('avgConsumption');
+    const costPerKmEl = document.getElementById('costPerKm');
+    const totalCostEl = document.getElementById('totalCost');
+    const lastFillEl = document.getElementById('lastFill');
+    const recordCountEl = document.getElementById('recordCount');
+
+    if (!entries.length) {
+      avgConsumptionEl.textContent = '0 L/100km';
+      costPerKmEl.textContent = 'R$ 0,00';
+      totalCostEl.textContent = 'R$ 0,00';
+      lastFillEl.textContent = '-';
+      recordCountEl.textContent = '0 registros';
+      return;
+    }
+
+    const totalLiters = entries.reduce((s, e) => s + e.liters, 0);
+    const totalKm = entries.reduce((s, e) => s + e.distance, 0);
+    const totalCost = entries.reduce((s, e) => s + e.cost, 0);
+    const avgConsumption = totalKm > 0 ? (totalLiters / totalKm) * 100 : 0;
+    const costPerKm = totalKm > 0 ? totalCost / totalKm : 0;
+
+    avgConsumptionEl.textContent = `${avgConsumption.toFixed(2)} L/100km`;
+    costPerKmEl.textContent = formatCurrency(costPerKm);
+    totalCostEl.textContent = formatCurrency(totalCost);
+    lastFillEl.textContent = entries[entries.length-1].date || '-';
+    recordCountEl.textContent = `${entries.length} registro${entries.length>1?'s':''}`;
+  }
+
+  function drawChart() {
+    const chartCanvas = document.getElementById('consumptionChart');
+    if (!chartCanvas) return;
+    const ctx = chartCanvas.getContext('2d');
+    ctx.clearRect(0,0,chartCanvas.width,chartCanvas.height);
+    if (!entries.length) {
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '16px Inter, sans-serif';
+      ctx.fillText('Adicione registros para ver o gráfico', 18, 100);
+      return;
+    }
+    // Simples: não redesenhar detalhadamente para o standalone
+  }
+
+  function renderEntries() {
+    const entryTable = document.getElementById('entryTable');
+    entryTable.innerHTML = '';
+    if (!entries.length) {
+      entryTable.innerHTML = '<tr class="empty-row"><td colspan="6">Nenhum registro ainda.</td></tr>';
+      drawChart();
+      return;
+    }
+    entries.slice().reverse().forEach((entry) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${entry.date}</td><td>${entry.vehicle||'-'}</td><td>${(entry.distance||0).toFixed(1)} km</td><td>${(entry.liters||0).toFixed(2)} L</td><td>${formatCurrency(entry.price||0)}</td><td>${formatCurrency(entry.cost||0)}</td><td>-</td>`;
+      entryTable.appendChild(tr);
+    });
+    drawChart();
+  }
+
+  // Initial render
+  updateSummary();
+  renderEntries();
+
+  // Clear all
+  const clearAllButton = document.getElementById('clearAll');
+  if (clearAllButton) clearAllButton.addEventListener('click', () => {
+    if (!confirm('Deseja realmente remover todos os registros?')) return;
+    entries = [];
+    localStorage.removeItem(STORAGE_KEY);
+    updateSummary();
+    renderEntries();
+  });
+})();
+  </script>
+</body>
+</html>

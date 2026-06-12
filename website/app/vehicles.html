@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciar Veículos</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-vehicles">
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Fuel Consumption Tracker</p>
+        <h1>Gerenciar Veículos</h1>
+      </div>
+      <nav class="top-nav">
+        <a class="ghost-button" href="index.html">Tela principal</a>
+        <a class="ghost-button" href="new_entry.html">Adicionar registro</a>
+        <a id="navHome" class="ghost-button" href="vehicles.html">Veículos</a>
+
+      </nav>
+    </header>
+
+    <div class="summary-grid vehicle-summary-cards" id="vehicleSummaryCards">
+      <div class="summary-card">
+        <p>Veículos cadastrados</p>
+        <strong id="vehicleCount">0</strong>
+      </div>
+      <div class="summary-card">
+        <p>Km inicial médio</p>
+        <strong id="vehicleAvgInitial">0 km</strong>
+      </div>
+      <div class="summary-card">
+        <p>Km atual médio</p>
+        <strong id="vehicleAvgCurrent">0 km</strong>
+      </div>
+    </div>
+
+    <section class="form-section">
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <h2>Veículos cadastrados</h2>
+            <label class="vehicle-km-toggle">
+              <input type="checkbox" id="showVehicleKm" /> Mostrar km do veículo
+            </label>
+            <p id="vehicleKmDisplay" class="vehicle-km-display"></p>
+          </div>
+          <span class="status-pill" id="vehicleListCount">0</span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Ano</th>
+                <th>Placa</th>
+                <th>Km inicial</th>
+                <th class="vehicle-odometer-col">Km atual</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="vehicleTable">
+              <tr class="empty-row"><td colspan="8">Nenhum veículo cadastrado.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-header">
+          <div>
+            <p class="eyebrow">Novo veículo</p>
+            <h2>Adicionar veículo</h2>
+          </div>
+          <span class="status-pill" id="vehicleFormCount">0</span>
+        </div>
+        <form id="vehicleForm">
+          <div class="grid-2">
+            <label>
+              Tipo
+              <select id="vType" required>
+                <option value="">Selecione</option>
+                <option value="Carro">Carro</option>
+                <option value="Moto">Moto</option>
+                <option value="Caminhão">Caminhão</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+            <label>
+              Marca
+              <input type="text" id="vMake" required />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>
+              Modelo
+              <input type="text" id="vModel" required />
+            </label>
+            <label>
+              Ano
+              <input type="number" id="vYear" min="1900" max="2100" required />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>
+              Placa
+              <input type="text" id="vPlate" />
+            </label>
+            <label>
+              Km inicial (registro)
+              <input type="number" id="vOdometer" step="1" min="0" />
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <label>
+              Capacidade do tanque (L)
+              <input type="number" id="vTank" step="0.1" min="0" />
+            </label>
+            <label>
+              Tipo de combustível
+              <select id="vFuel">
+                <option value="Gasolina">Gasolina</option>
+                <option value="Etanol">Etanol</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="button-row">
+            <button type="submit">Salvar veículo</button>
+            <button type="button" id="cancelVehicleEdit" class="ghost-button" style="display:none">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

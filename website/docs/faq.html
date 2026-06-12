@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - Fuel Consumption Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.8; color: #333; background: #f9fafb; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; margin-bottom: 40px; }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 24px; font-weight: bold; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; }
+    h1 { color: #667eea; margin-bottom: 30px; text-align: center; }
+    .faq-item { background: white; margin-bottom: 15px; border-radius: 8px; overflow: hidden; }
+    .faq-question { padding: 20px; cursor: pointer; background: #f9fafb; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #667eea; transition: background 0.3s; }
+    .faq-question:hover { background: #e5e7eb; }
+    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s; color: #555; }
+    .faq-answer.open { padding: 20px; max-height: 1000px; }
+    .toggle-icon { font-size: 20px; transition: transform 0.3s; }
+    .toggle-icon.open { transform: rotate(180deg); }
+    a { color: #667eea; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    footer { text-align: center; color: #999; margin-top: 60px; padding-top: 20px; border-top: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">⛽ Fuel Tracker</div>
+      <nav>
+        <a href="../index.html">Início</a>
+        <a href="guide.html">Guia</a>
+        <a href="faq.html">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Perguntas Frequentes</h1>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Meus dados são enviados para um servidor?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Não!</strong> Todos os dados são armazenados localmente no seu navegador usando localStorage. Nenhuma informação é enviada para servidores externos. Sua privacidade está completamente garantida.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Preciso criar uma conta?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Não!</strong> Não há login, cadastro ou autenticação necessária. Basta abrir e começar a usar. É totalmente anônimo.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Posso usar em múltiplos dispositivos?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Sim, você pode usar em vários dispositivos. Porém, os dados ficam isolados em cada um. Se você quer sincronizar entre dispositivos, você precisará fazer backup manualmente dos dados de um e restaurar em outro.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Como faço backup dos meus dados?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Para fazer backup:</p>
+        <ol style="margin-left: 20px;">
+          <li>Abra a aplicação</li>
+          <li>Pressione F12 para abrir DevTools</li>
+          <li>Vá na aba "Application" ou "Storage"</li>
+          <li>Procure por "Local Storage"</li>
+          <li>Você verá seus dados em formato JSON</li>
+          <li>Copie e salve em um arquivo de texto seguro</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>E se limpar os cookies do navegador?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>⚠️ Aviso:</strong> Limpar cache/cookies/dados do navegador pode apagar seus dados. Faça backup antes de fazer limpeza de navegador!</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Funciona offline?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Sim!</strong> Especialmente se usar o arquivo <code>app-standalone.html</code> que é totalmente auto-contido. Uma vez carregado, funciona completamente offline.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Quais navegadores são suportados?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Qualquer navegador moderno que suporte ES6 e localStorage:</p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>✅ Chrome/Chromium (versão 55+)</li>
+          <li>✅ Firefox (versão 54+)</li>
+          <li>✅ Safari (versão 11+)</li>
+          <li>✅ Edge (versão 79+)</li>
+          <li>✅ Opera (versão 42+)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Como instalo?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Não precisa instalar!</strong> Você tem 3 opções:</p>
+        <ol style="margin-left: 20px;">
+          <li><strong>Online:</strong> Abra <a href="../app/index.html">a aplicação web</a></li>
+          <li><strong>Offline:</strong> Baixe <code>app-standalone.html</code> e abra no navegador</li>
+          <li><strong>Servidor local:</strong> Execute o <code>start-server.bat</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Posso imprimir meu relatório?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Sim! Você pode:</p>
+        <ul style="margin-left: 20px;">
+          <li>Usar Ctrl+P (ou Cmd+P no Mac) para imprimir a página</li>
+          <li>Screenshot dos gráficos e tabelas</li>
+          <li>Exportar os dados do localStorage para um arquivo</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Posso editar ou deletar registros?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Sim!</strong> Na tabela de registros, cada entrada tem botões de ação:</p>
+        <ul style="margin-left: 20px;">
+          <li>✏️ Editar - modifica o registro</li>
+          <li>🗑️ Deletar - remove o registro</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Como calcula o consumo?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Fórmula:</strong> (Total de litros ÷ Total de km) × 100 = L/100km</p>
+        <p><strong>Exemplo:</strong> Se você gastou 50 litros em 500 km: (50 ÷ 500) × 100 = 10 L/100km</p>
+        <p>Quanto menor este número, mais eficiente é o consumo.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>E se esquecer de registrar um abastecimento?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>Você pode adicionar registros retroativos:</p>
+        <ol style="margin-left: 20px;">
+          <li>Clique em "Adicionar registro"</li>
+          <li>Use uma data anterior</li>
+          <li>Os dados serão agregados corretamente</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Posso ter múltiplos veículos?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p><strong>Sim!</strong> Você pode cadastrar quantos veículos quiser em "Gerenciar veículos". Cada um terá:</p>
+        <ul style="margin-left: 20px;">
+          <li>Histórico independente</li>
+          <li>Seus próprios cálculos de consumo</li>
+          <li>Gráficos separados</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Como contribuir com o projeto?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>O Fuel Consumption Tracker é open-source! Você pode:</p>
+        <ul style="margin-left: 20px;">
+          <li>Reportar bugs</li>
+          <li>Sugerir melhorias</li>
+          <li>Fazer pull requests no GitHub</li>
+          <li>Compartilhar com amigos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Tem uma versão para iOS/Android?</span>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="faq-answer">
+        <p>A aplicação web funciona em smartphones! É responsiva e otimizada para celular. Você pode:</p>
+        <ul style="margin-left: 20px;">
+          <li>Abrir no navegador do celular</li>
+          <li>Adicionar à tela inicial (favorito)</li>
+          <li>Usar como um app nativo</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      <p>Fuel Consumption Tracker © 2026</p>
+      <p><a href="../index.html">Voltar para o início</a></p>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const answer = question.nextElementSibling;
+        const icon = question.querySelector('.toggle-icon');
+        answer.classList.toggle('open');
+        icon.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>

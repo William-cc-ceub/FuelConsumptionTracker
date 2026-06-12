@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia de Uso - Fuel Consumption Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.8; color: #333; background: #f9fafb; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; margin-bottom: 40px; }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 24px; font-weight: bold; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; }
+    h1 { color: #667eea; margin-bottom: 20px; }
+    h2 { color: #667eea; margin-top: 40px; margin-bottom: 20px; }
+    h3 { color: #764ba2; margin-top: 25px; margin-bottom: 15px; }
+    p { margin-bottom: 15px; color: #555; }
+    .step { background: white; padding: 25px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea; }
+    .step h3 { margin-top: 0; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+    img { max-width: 100%; height: auto; margin: 20px 0; border-radius: 8px; }
+    ul, ol { margin-left: 20px; margin-bottom: 15px; }
+    li { margin-bottom: 10px; }
+    .tip { background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    .warning { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    footer { text-align: center; color: #999; margin-top: 60px; padding-top: 20px; border-top: 1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">⛽ Fuel Tracker</div>
+      <nav>
+        <a href="../index.html">Início</a>
+        <a href="guide.html">Guia</a>
+        <a href="faq.html">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>Guia Completo de Uso</h1>
+
+    <h2>Começando</h2>
+    
+    <div class="step">
+      <h3>1️⃣ Abra a Aplicação</h3>
+      <p>Acesse <a href="../app/index.html">a aplicação</a> ou abra o arquivo <code>app-standalone.html</code> no seu navegador.</p>
+      <p>Nenhuma instalação necessária - funciona em qualquer navegador moderno!</p>
+    </div>
+
+    <div class="step">
+      <h3>2️⃣ Cadastre Seus Veículos</h3>
+      <p>Antes de registrar abastecimentos, você precisa cadastrar seus veículos.</p>
+      <ol>
+        <li>Clique em "Gerenciar veículos"</li>
+        <li>Preencha os dados do veículo:
+          <ul>
+            <li><strong>Tipo:</strong> Carro, Moto, Caminhão, etc.</li>
+            <li><strong>Marca e Modelo:</strong> Ex: Toyota, Corolla</li>
+            <li><strong>Ano:</strong> Ano de fabricação</li>
+            <li><strong>Placa:</strong> Opcional, ajuda a identificar</li>
+            <li><strong>Km inicial:</strong> Quilometragem quando começou a usar o app</li>
+            <li><strong>Capacidade do tanque:</strong> Em litros</li>
+            <li><strong>Combustível:</strong> Gasolina, Etanol, Diesel</li>
+          </ul>
+        </li>
+        <li>Clique em "Salvar veículo"</li>
+      </ol>
+      <div class="tip">
+        <strong>💡 Dica:</strong> Você pode cadastrar múltiplos veículos. Cada um terá seu histórico independente.
+      </div>
+    </div>
+
+    <div class="step">
+      <h3>3️⃣ Registre Abastecimentos</h3>
+      <p>Na página "Adicionar registro", preencha:</p>
+      <ol>
+        <li><strong>Data:</strong> Quando fez o abastecimento</li>
+        <li><strong>Veículo:</strong> Qual veículo</li>
+        <li><strong>Distância (km):</strong> Quilometragem percorrida desde o último abastecimento</li>
+        <li><strong>Litros:</strong> Quantidade de combustível abastecido</li>
+        <li><strong>Preço por litro:</strong> Preço do combustível</li>
+        <li><strong>Observações:</strong> Opcional - notas adicionais</li>
+      </ol>
+      <p>Clique em "Salvar" para registrar.</p>
+      <div class="warning">
+        <strong>⚠️ Importante:</strong> O campo "Distância" é essencial para calcular o consumo. Não deixe em branco.
+      </div>
+    </div>
+
+    <h2>Interpretando os Dados</h2>
+
+    <div class="step">
+      <h3>Média de Consumo (L/100km)</h3>
+      <p>Mostra quantos litros seu veículo consome para rodar 100 km.</p>
+      <p><strong>Fórmula:</strong> (Total de litros / Total de km) × 100</p>
+      <p><strong>Exemplo:</strong> Se consumir 50L em 500km: (50/500)×100 = 10 L/100km</p>
+      <div class="tip">
+        <strong>💡 Dica:</strong> Quanto menor este número, melhor! Um carro com 8-10 L/100km é considerado eficiente.
+      </div>
+    </div>
+
+    <div class="step">
+      <h3>Custo por km</h3>
+      <p>Mostra quanto você gasta em combustível por quilômetro rodado.</p>
+      <p><strong>Fórmula:</strong> Custo total ÷ Total de km</p>
+      <div class="tip">
+        <strong>💡 Dica:</strong> Use para planejar suas viagens e entender o custo real das suas rotas.
+      </div>
+    </div>
+
+    <div class="step">
+      <h3>Gráfico de Consumo Mensal</h3>
+      <p>Visualiza seu consumo ao longo dos meses.</p>
+      <ul>
+        <li>Use "Ver por: Por data" para ver evolução temporal</li>
+        <li>Use "Ver por: Por máximo gasto" para identificar meses mais caros</li>
+      </ul>
+    </div>
+
+    <h2>Dicas e Truques</h2>
+
+    <div class="tip">
+      <h3>Acompanhe a Eficiência</h3>
+      <p>Compare o consumo mês a mês. Se notar aumento, pode indicar:</p>
+      <ul>
+        <li>Problemas mecânicos</li>
+        <li>Pneus com pouca pressão</li>
+        <li>Dirigir em condições urbanas intensas</li>
+        <li>Combustível de menor qualidade</li>
+      </ul>
+    </div>
+
+    <div class="tip">
+      <h3>Identifique Economia</h3>
+      <p>Se o consumo melhorou:</p>
+      <ul>
+        <li>Revise a manutenção do veículo</li>
+        <li>Note as condições das rotas (rodovia vs. cidade)</li>
+        <li>Observe mudanças no seu estilo de condução</li>
+      </ul>
+    </div>
+
+    <div class="tip">
+      <h3>Organização</h3>
+      <ul>
+        <li>Registre logo após cada abastecimento enquanto se lembra</li>
+        <li>Use observações para registrar situações especiais (viagem longa, carga pesada)</li>
+        <li>Revise os dados mensalmente</li>
+      </ul>
+    </div>
+
+    <h2>Dados e Privacidade</h2>
+    <p>Todos os seus dados são armazenados <strong>localmente no seu navegador</strong> usando localStorage.</p>
+    <ul>
+      <li>✅ Nenhum servidor externo</li>
+      <li>✅ Seus dados não saem do seu computador</li>
+      <li>✅ Funciona offline</li>
+      <li>⚠️ Limpar cache/cookies do navegador apaga os dados</li>
+      <li>⚠️ Os dados não sincronizam automaticamente entre dispositivos</li>
+    </ul>
+
+    <h2>Backup e Exportação</h2>
+    <p>Para fazer backup dos seus dados:</p>
+    <ol>
+      <li>Abra o DevTools (pressione F12)</li>
+      <li>Vá na aba "Console"</li>
+      <li>Digite: <code>localStorage</code></li>
+      <li>Copie os dados para um arquivo de texto seguro</li>
+    </ol>
+
+    <h2>Resolução de Problemas</h2>
+
+    <div class="step">
+      <h3>Os dados desapareceram!</h3>
+      <p><strong>Causa:</strong> Você pode ter limpado o cache/cookies do navegador.</p>
+      <p><strong>Solução:</strong> Restaure o backup que você fez anteriormente.</p>
+    </div>
+
+    <div class="step">
+      <h3>A aplicação não funciona offline</h3>
+      <p><strong>Causa:</strong> Você está usando a versão online que requer internet.</p>
+      <p><strong>Solução:</strong> Use o arquivo <code>app-standalone.html</code> que funciona completamente offline.</p>
+    </div>
+
+    <div class="step">
+      <h3>Consumo não está calculando</h3>
+      <p><strong>Causa:</strong> Você pode não ter preenchido o campo "Distância".</p>
+      <p><strong>Solução:</strong> Edite o registro e preencha a distância em km.</p>
+    </div>
+
+    <footer>
+      <p>Fuel Consumption Tracker © 2026</p>
+      <p><a href="../index.html">Voltar para o início</a></p>
+    </footer>
+  </div>
+</body>
+</html>

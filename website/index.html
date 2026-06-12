@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fuel Consumption Tracker - Aplicação web para controlar consumo de combustível, registrar abastecimentos e acompanhar suas despesas com combustível.">
+  <meta name="keywords" content="combustível, consumo, rastreamento, economia, carro, moto, aplicação">
+  <meta name="author" content="Fuel Consumption Tracker">
+  <meta property="og:title" content="Fuel Consumption Tracker">
+  <meta property="og:description" content="Controle seu consumo de combustível de forma simples e eficiente">
+  <meta property="og:type" content="website">
+  <title>Fuel Consumption Tracker - Controle de Consumo de Combustível</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; background: #f9fafb; }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    /* Header */
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 28px; font-weight: bold; }
+    nav a { color: white; text-decoration: none; margin: 0 20px; transition: opacity 0.3s; }
+    nav a:hover { opacity: 0.8; }
+    
+    /* Hero Section */
+    .hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 100px 20px; text-align: center; }
+    .hero h1 { font-size: 48px; margin-bottom: 20px; }
+    .hero p { font-size: 20px; margin-bottom: 30px; opacity: 0.9; }
+    .cta-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 15px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s; border: none; cursor: pointer; font-size: 16px; }
+    .btn-primary { background: white; color: #667eea; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    .btn-secondary { background: rgba(255,255,255,0.2); color: white; border: 2px solid white; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.3); }
+    
+    /* Features */
+    .features { padding: 80px 20px; background: white; }
+    .section-title { text-align: center; font-size: 36px; margin-bottom: 60px; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+    .feature-card { text-align: center; padding: 30px; border-radius: 12px; background: #f9fafb; }
+    .feature-icon { font-size: 48px; margin-bottom: 20px; }
+    .feature-card h3 { margin-bottom: 15px; color: #667eea; }
+    .feature-card p { color: #666; }
+    
+    /* Benefits */
+    .benefits { padding: 80px 20px; background: #f9fafb; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+    .benefit-item { background: white; padding: 25px; border-radius: 8px; border-left: 4px solid #667eea; }
+    .benefit-item h4 { margin-bottom: 10px; color: #667eea; }
+    
+    /* Download Section */
+    .download { padding: 80px 20px; background: white; }
+    .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px; }
+    .download-card { background: #f9fafb; padding: 30px; border-radius: 12px; text-align: center; border: 2px solid #e5e7eb; }
+    .download-card h3 { margin-bottom: 15px; color: #333; }
+    .download-card p { color: #666; margin-bottom: 20px; font-size: 14px; }
+    .download-card .btn { width: 100%; }
+    
+    /* FAQ */
+    .faq { padding: 80px 20px; background: #f9fafb; }
+    .faq-item { background: white; margin-bottom: 20px; border-radius: 8px; overflow: hidden; }
+    .faq-question { padding: 20px; cursor: pointer; background: #f9fafb; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    .faq-question:hover { background: #e5e7eb; }
+    .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s; }
+    .faq-answer.open { padding: 20px; max-height: 500px; }
+    .toggle-icon { font-size: 20px; transition: transform 0.3s; }
+    .toggle-icon.open { transform: rotate(180deg); }
+    
+    /* Footer */
+    footer { background: #1f2937; color: white; padding: 40px 20px; text-align: center; }
+    footer p { margin: 10px 0; }
+    footer a { color: #667eea; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 16px; }
+      nav a { margin: 0 10px; font-size: 14px; }
+      .cta-buttons { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">⛽ Fuel Tracker</div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#benefits">Benefícios</a>
+        <a href="#download">Download</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Controle seu Consumo de Combustível</h1>
+      <p>Rastreie abastecimentos, calcule consumo médio e economize combustível com dados precisos</p>
+      <div class="cta-buttons">
+        <a href="app/index.html" class="btn btn-primary">Abrir Aplicação</a>
+        <a href="#download" class="btn btn-secondary">Download Offline</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="container">
+      <h2 class="section-title">Recursos Principais</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Estatísticas Detalhadas</h3>
+          <p>Acompanhe consumo médio, custo por km e gaste total com gráficos e relatórios mensais</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚗</div>
+          <h3>Múltiplos Veículos</h3>
+          <p>Gerencie vários veículos em uma única conta com histórico independente</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>Dados Locais</h3>
+          <p>Todos os dados armazenados localmente no seu navegador - privacidade garantida</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Responsivo</h3>
+          <p>Funciona perfeitamente em desktop, tablet e smartphone</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚙️</div>
+          <h3>Sem Configuração</h3>
+          <p>Use imediatamente sem necessidade de criar conta ou fazer login</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌙</div>
+          <h3>Tema Escuro</h3>
+          <p>Interface moderna com tema escuro que protege os olhos</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="benefits" id="benefits">
+    <div class="container">
+      <h2 class="section-title">Por que usar Fuel Tracker?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <h4>💰 Economize Dinheiro</h4>
+          <p>Identifique padrões de consumo e otimize suas rotas para gastar menos com combustível</p>
+        </div>
+        <div class="benefit-item">
+          <h4>📈 Monitore Tendências</h4>
+          <p>Veja como seu consumo varia ao longo dos meses com gráficos intuitivos</p>
+        </div>
+        <div class="benefit-item">
+          <h4>🔒 Privacidade Total</h4>
+          <p>Seus dados nunca saem do seu navegador - nenhum servidor, nenhuma coleta</p>
+        </div>
+        <div class="benefit-item">
+          <h4>⚡ Rápido e Leve</h4>
+          <p>Aplicação sem dependências externas que carrega em segundos</p>
+        </div>
+        <div class="benefit-item">
+          <h4>📱 Offline Ready</h4>
+          <p>Funciona completamente offline - perfeito para quando você está na estrada</p>
+        </div>
+        <div class="benefit-item">
+          <h4>🎯 Fácil de Usar</h4>
+          <p>Interface intuitiva que qualquer um consegue usar na primeira vez</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="download" id="download">
+    <div class="container">
+      <h2 class="section-title">Como Usar</h2>
+      <div class="download-grid">
+        <div class="download-card">
+          <h3>🌐 Online</h3>
+          <p>Abra em qualquer navegador moderno. Suporte total a Chrome, Firefox, Safari e Edge.</p>
+          <a href="app/index.html" class="btn btn-primary">Abrir Agora</a>
+        </div>
+        <div class="download-card">
+          <h3>📥 Offline (All-in-One)</h3>
+          <p>Arquivo HTML único que funciona completamente offline. Baixe e abra no navegador.</p>
+          <a href="app-standalone.html" class="btn btn-primary">Download HTML</a>
+        </div>
+        <div class="download-card">
+          <h3>🚀 Servidor Local</h3>
+          <p>Execute o script start-server.bat para rodar em localhost com sincronização automática.</p>
+          <a href="#faq" class="btn btn-primary">Ver Instruções</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="container">
+      <h2 class="section-title">Perguntas Frequentes</h2>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Meus dados são enviados para um servidor?</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Não! Todos os dados são armazenados localmente no seu navegador usando localStorage. Sua privacidade está garantida.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Posso usar em múltiplos dispositivos?</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Os dados ficam em cada dispositivo. Para sincronizar entre dispositivos, você pode fazer backup manual exportando/importando os dados.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Como faço backup dos meus dados?</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Abra o DevTools (F12), vá na aba Console e execute: <code>localStorage</code>. Você pode fazer screenshot ou exportar para um arquivo.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Preciso instalar algo?</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Não! Basta abrir no navegador. Para offline, baixe o arquivo HTML único e abra localmente.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Quais navegadores são suportados?</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Chrome, Firefox, Safari, Edge e qualquer navegador moderno que suporte ES6 e localStorage.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Posso contribuir com o projeto?</span>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+          <p>Sim! O projeto é open-source. Visite nosso repositório no GitHub para contribuições.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p><strong>Fuel Consumption Tracker</strong></p>
+      <p>© 2026 - Controle seu consumo de combustível de forma inteligente</p>
+      <p><a href="docs/guide.html">Guia Completo</a> | <a href="#faq">FAQ</a> | <a href="docs/privacy.html">Privacidade</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ Toggle
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const answer = question.nextElementSibling;
+        const icon = question.querySelector('.toggle-icon');
+        answer.classList.toggle('open');
+        icon.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>
