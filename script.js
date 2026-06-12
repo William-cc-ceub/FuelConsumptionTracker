@@ -13,23 +13,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = `fuelConsumptionEntries_${userId}`;
   const VEHICLE_KEY = `vehicles_${userId}`;
 
-  const fuelForm = document.getElementById('fuelForm');
-  const entryTable = document.getElementById('entryTable');
-  const avgConsumptionEl = document.getElementById('avgConsumption');
-  const costPerKmEl = document.getElementById('costPerKm');
-  const totalCostEl = document.getElementById('totalCost');
-  const lastFillEl = document.getElementById('lastFill');
-  const clearAllButton = document.getElementById('clearAll');
-  const cancelEditButton = document.getElementById('cancelEdit');
-  const recordCountEl = document.getElementById('recordCount');
-  const chartCanvas = document.getElementById('consumptionChart');
-  const showVehicleKmCheckbox = document.getElementById('showVehicleKm');
-  const vehicleKmDisplay = document.getElementById('vehicleKmDisplay');
-  const navVehiclesBtn = document.getElementById('navVehicles');
-  const navHomeBtn = document.getElementById('navHome');
-  const vehicleSelect = document.getElementById('vehicleId');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const userDisplay = document.getElementById('userDisplay');
+  // Small DOM helpers to keep code concise and easier to refactor into components
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from((ctx || document).querySelectorAll(sel));
+
+  const fuelForm = $('#fuelForm');
+  const entryTable = $('#entryTable');
+  const avgConsumptionEl = $('#avgConsumption');
+  const costPerKmEl = $('#costPerKm');
+  const totalCostEl = $('#totalCost');
+  const lastFillEl = $('#lastFill');
+  const clearAllButton = $('#clearAll');
+  const cancelEditButton = $('#cancelEdit');
+  const recordCountEl = $('#recordCount');
+  const chartCanvas = $('#consumptionChart');
+  const showVehicleKmCheckbox = $('#showVehicleKm');
+  const vehicleKmDisplay = $('#vehicleKmDisplay');
+  const navVehiclesBtn = $('#navVehicles');
+  const navHomeBtn = $('#navHome');
+  const vehicleSelect = $('#vehicleId');
+  const logoutBtn = $('#logoutBtn');
+  const userDisplay = $('#userDisplay');
 
   // Display current user
   if (userDisplay) {
@@ -45,45 +49,63 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  // Load entries and vehicles for the current user. If none found, try migrating
-  // legacy global keys (no-user) into the user-scoped keys so existing data
-  // remains available after enabling multi-user mode.
-  let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  let vehicles = JSON.parse(localStorage.getItem(VEHICLE_KEY) || '[]').map((v) => ({
-    ...v,
-    id: v.id || generateId(),
-    initialOdometer: v.initialOdometer != null ? v.initialOdometer : v.odometer,
-  }));
+  // Storage module: encapsula carregamento, salvamento e migração de dados por usuário
+  const Storage = {
+    loadEntries() {
+      try {
+        const userEntries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (Array.isArray(userEntries) && userEntries.length) return userEntries;
+      } catch (e) { /* ignore */ }
 
-  // Migrate legacy global vehicles if user-scoped vehicles are empty
-  if ((!vehicles || vehicles.length === 0) && localStorage.getItem('vehicles')) {
-    try {
-      const legacy = JSON.parse(localStorage.getItem('vehicles') || '[]');
-      if (Array.isArray(legacy) && legacy.length) {
-        vehicles = legacy.map((v) => ({
-          ...v,
-          id: v.id || generateId(),
-          initialOdometer: v.initialOdometer != null ? v.initialOdometer : v.odometer,
-        }));
-        localStorage.setItem(VEHICLE_KEY, JSON.stringify(vehicles));
-      }
-    } catch (e) {
-      // ignore parse errors
-    }
-  }
+      // fallback: migrate legacy global entries
+      try {
+        const legacy = JSON.parse(localStorage.getItem('fuelConsumptionEntries') || '[]');
+        if (Array.isArray(legacy) && legacy.length) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy));
+          return legacy;
+        }
+      } catch (e) { /* ignore */ }
+      return [];
+    },
+    loadVehicles() {
+      let loaded = [];
+      try {
+        loaded = JSON.parse(localStorage.getItem(VEHICLE_KEY) || '[]') || [];
+      } catch (e) { loaded = []; }
 
-  // Migrate legacy global entries if user-scoped entries are empty
-  if ((!entries || entries.length === 0) && localStorage.getItem('fuelConsumptionEntries')) {
-    try {
-      const legacyEntries = JSON.parse(localStorage.getItem('fuelConsumptionEntries') || '[]');
-      if (Array.isArray(legacyEntries) && legacyEntries.length) {
-        entries = legacyEntries;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      loaded = (Array.isArray(loaded) ? loaded : []).map((v) => ({
+        ...v,
+        id: v.id || generateId(),
+        initialOdometer: v.initialOdometer != null ? v.initialOdometer : v.odometer,
+      }));
+
+      // migrate legacy global vehicles when none exist for user
+      if ((!loaded || loaded.length === 0) && localStorage.getItem('vehicles')) {
+        try {
+          const legacy = JSON.parse(localStorage.getItem('vehicles') || '[]');
+          if (Array.isArray(legacy) && legacy.length) {
+            loaded = legacy.map((v) => ({
+              ...v,
+              id: v.id || generateId(),
+              initialOdometer: v.initialOdometer != null ? v.initialOdometer : v.odometer,
+            }));
+            localStorage.setItem(VEHICLE_KEY, JSON.stringify(loaded));
+          }
+        } catch (e) { /* ignore */ }
       }
-    } catch (e) {
-      // ignore parse errors
+
+      return loaded;
+    },
+    saveEntries() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    },
+    saveVehicles() {
+      localStorage.setItem(VEHICLE_KEY, JSON.stringify(vehicles));
     }
-  }
+  };
+
+  let entries = Storage.loadEntries();
+  let vehicles = Storage.loadVehicles();
   let editingId = null;
   let editingVehicleId = null;
 
@@ -442,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveEntries() {
     recalculateAllDistances();
     updateVehicleOdometer();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    Storage.saveEntries();
     if (entryTable) renderEntries();
     if (avgConsumptionEl) updateSummary();
     const monthlyModeEl = document.getElementById('monthlyMode');
@@ -452,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveVehicles() {
-    localStorage.setItem(VEHICLE_KEY, JSON.stringify(vehicles));
+    Storage.saveVehicles();
     renderVehicleList();
     updateVehicleSummary();
     populateVehicleSelect();
